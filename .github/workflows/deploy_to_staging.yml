@@ -49,7 +49,7 @@ jobs:
       # performing linting in the applcation
       - name: Linting In The Project
         run: |
-          cd ReactNodeTesting
+          cd App
           npx eslint src/sum.js src/cartview.js src/shippingOptions.js
 
       # Deploy All Changes To The Staging Server
