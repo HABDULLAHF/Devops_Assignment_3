@@ -117,40 +117,40 @@ jobs:
             echo "Testing the nodejs app endpoints"
             echo ${{ steps.docker_build.outputs.digest }}
 
-  Msg:
-    # notifying the QA and the Developer on workflow success.
-    - name: Notify on success
-      if: success()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        secure: true
-        username: ${{ secrets.MAIL_USERNAME }}
-        # Optional (recommended) mail server password:
-        password: ${{ secrets.MAIL_PASSWORD }}
-        subject: Deployment Test Success
-        to: habdullahfarooq@gmail.com
-        from: habdullahfarooq@gmail.com
-        body: >
-          Workflow of ${{ github.repository }} initiated by ${{ github.actor }}
-          was successfully executed. View the changes on the server
-          ${{ secrets.TESTING_SERVER }}
 
-    # notifying the QA and the Developer on workflow success.
-    - name: Notify on Failure
-      if: failure()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        secure: true
-        username: ${{ secrets.MAIL_USERNAME }}
-        # Optional (recommended) mail server password:
-        password: ${{ secrets.MAIL_PASSWORD }}
-        subject: Test Failure
-        to: habdullahfarooq@gmail.com
-        from: habdullahfarooq@gmail.com
-        body: >
-          Workflow of ${{ github.repository }} initiated by ${{ github.actor }}
-          failed, kindly check the workflow logs!
+      # notifying the QA and the Developer on workflow success.
+      - name: Notify on success
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          # Optional (recommended) mail server password:
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Deployment Test Success
+          to: habdullahfarooq@gmail.com
+          from: habdullahfarooq@gmail.com
+          body: >
+            Workflow of ${{ github.repository }} initiated by ${{ github.actor }}
+            was successfully executed. View the changes on the server
+            ${{ secrets.TESTING_SERVER }}
+  
+      # notifying the QA and the Developer on workflow success.
+      - name: Notify on Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          # Optional (recommended) mail server password:
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Test Failure
+          to: habdullahfarooq@gmail.com
+          from: habdullahfarooq@gmail.com
+          body: >
+            Workflow of ${{ github.repository }} initiated by ${{ github.actor }}
+            failed, kindly check the workflow logs!
