@@ -119,62 +119,30 @@ jobs:
             
   deployStaging:
     runs-on: ubuntu-latest
-    needs: [deploy]
+    needs: [dockerHub]
     steps:
-      - name: Checking Out
-        uses: actions/checkout@v4
-        
-      - name: Setting Up Node JS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-        
-      - name: Testing Node Installation
-        run:  |
-          node --version
-      
-      - name: Install dependencies
-        run:  |
-          cd App
-          npm install
-          
-      - name: Building Project
-        run: |
-          cd App
-          npm run build-react
-
-      - name: Testing The Project
-        run: |
-          cd App
-          npm run test-react
-          
-      - name: Linting In The Project
-        run: |
-          cd App
-          npx eslint src/sum.js src/cartview.js src/shippingOptions.js
-
-      - name: Deploy Changes To Staging Server
-        uses: burnett01/rsync-deployments@6.0.0
-        with:
-          switches: -avzr --delete
-          path: ./*
-          remote_path: ~/Devops_Assignment_3
-          remote_host: ${{ secrets.STAGING_SERVER }}
-          remote_user: ubuntu
-          remote_key: ${{ secrets.SSH_KEY }}
-
-      - name: Installing Node Modules
-        uses: appleboy/ssh-action@v1.0.0
+      - name: SSH into AWS EC2
+        uses: appleboy/ssh-action@master+
         with:
           host: ${{ secrets.STAGING_SERVER }}
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
-          port: 22
           script: |
-            cd ~/Devops_Assignment_3/App
-            npm install
-
-      # notifying the QA and the Developer on workflow success.
+            # Pull the latest Docker image
+            docker pull abdullahfarooq1/nodejs-demo:latest
+            
+            # Stop and remove the existing container
+            docker stop nodejs-demo || true
+            docker rm nodejs-demo || true
+            
+            # Run the new container
+            docker run -d -p 3000:3000 --name nodejs-demo abdullahfarooq1/nodejs-demo:latest
+  
+  Message:
+    runs-on: ubuntu-latest
+    needs: [deployStaging]
+    steps:
+    # notifying the QA and the Developer on workflow success.
       - name: Notify on success
         if: success()
         uses: dawidd6/action-send-mail@v3
@@ -192,7 +160,7 @@ jobs:
             Workflow of ${{ github.repository }} initiated by ${{ github.actor }}
             was successfully executed. View the changes on the server
             ${{ secrets.TESTING_SERVER }}
-  
+    
       # notifying the QA and the Developer on workflow success.
       - name: Notify on Failure
         if: failure()
