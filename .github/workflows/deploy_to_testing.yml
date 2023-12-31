@@ -122,7 +122,7 @@ jobs:
     needs: [dockerHub]
     steps:
       - name: SSH into AWS EC2
-        uses: appleboy/ssh-action@master+
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.STAGING_SERVER }}
           username: ubuntu
